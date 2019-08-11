@@ -1,5 +1,6 @@
 #include <Adafruit_NeoPixel.h>
 #include "InfinityStone.h"
+#include "Board.h"
 
 #define PIXELCHAIN_PIN 6
 #define PIXEL_COUNT 6
@@ -22,15 +23,16 @@ InfinityStone foundOrder[] = {
   mindStone,
 };
 
+
 Adafruit_NeoPixel controller = Adafruit_NeoPixel(PIXEL_COUNT, PIXELCHAIN_PIN, NEO_GRB + NEO_KHZ800);
+Board ccc = Board(controller);
 
 void blackoutGauntlet() {
   for ( int i = 0; i < 6; i++ ) {
     InfinityStone stone = foundOrder[i];
-    uint32_t color = stone.getColor(0);    
-    controller.setPixelColor(stone.location, color);
-  }  
-  controller.show();
+    uint32_t color = stone.getColor(0);
+    ccc.setPixelColor(stone.location, color);
+  }
 }
 
 // Light the stones in the order Thanos found them.
@@ -38,23 +40,19 @@ void lightAllStones(int brightness) {
   for ( int i = 0; i < 6; i++ ) {
     InfinityStone stone = foundOrder[i];
     uint32_t color = stone.getColor(brightness);
-    controller.setPixelColor(stone.location, color);
-  }  
-  controller.show();  
+    ccc.setPixelColor(stone.location, color);
+  }
 }
 
 void lightStone(InfinityStone stone) {
   for ( int j = 1; j <= 100; j++ ) {
     uint32_t color = stone.getColor(j);
-
-    controller.setPixelColor(stone.location, color);
-    controller.show();
-    
-    delay(random(11, 25));    
+    ccc.setPixelColor(stone.location, color);
+    delay(random(11, 25));
   }
 }
 
-void lightStonesInOrder() { 
+void lightStonesInOrder() {
   blackoutGauntlet();
   delay(1000);
 
@@ -65,38 +63,37 @@ void lightStonesInOrder() {
 
 void hardPulseStones(int delayTime=random(10, 25)) {
   // int delayTime = 15;
-  
+
   for ( int p1 = 44; p1 <= 100; p1++ ) {
     lightAllStones(p1);
-    delay(delayTime);    
+    delay(delayTime);
   }
 
   for ( int p2 = 100; p2 > 85; p2-- ) {
     lightAllStones(p2);
-    delay(delayTime);        
+    delay(delayTime);
   }
 
   for ( int p2 = 85; p2 < 100; p2++ ) {
     lightAllStones(p2);
-    delay(delayTime);            
+    delay(delayTime);
   }
 
   for ( int p2 = 100; p2 > 85; p2-- ) {
     lightAllStones(p2);
-    delay(delayTime);        
+    delay(delayTime);
   }
 
   for ( int p3 = 85; p3 > 44; p3-- ) {
     lightAllStones(p3);
-    delay(delayTime);     
+    delay(delayTime);
   }
 }
 
-void setup() { 
+void setup() {
   randomSeed(analogRead(0));
-  
-  controller.begin();
-  controller.setBrightness(255);  
+
+  ccc.setup();
 
   lightStonesInOrder();
   hardPulseStones(random(20, 40));
@@ -109,6 +106,6 @@ void loop() {
     lightStonesInOrder();
   }
 
-  hardPulseStones(random(2, 25)); 
+  hardPulseStones(random(2, 25));
   delay(random(125, 425));
 }
