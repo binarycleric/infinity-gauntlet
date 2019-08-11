@@ -1,4 +1,5 @@
 #include <Adafruit_NeoPixel.h>
+#include "InfinityStone.h"
 
 #define PIXELCHAIN_PIN 6
 #define PIXEL_COUNT 6
@@ -32,18 +33,6 @@ int pulseLevels[] = {
 
 int pulseLength = sizeof(pulseLevels) / sizeof(int);
 
-struct StoneColor {
-  uint8_t red;
-  uint8_t green;
-  uint8_t blue;
-};
-
-struct InfinityStone {
-  StoneColor color; 
-  // The LED's location in the wiring chain.
-  int location;
-};
-
 InfinityStone timeStone    = { StoneColor {   0, 255,   0 }, 0 };
 InfinityStone powerStone   = { StoneColor { 255,   0, 255 }, 1 };
 InfinityStone spaceStone   = { StoneColor {   0,   0, 255 }, 2 };
@@ -60,17 +49,7 @@ InfinityStone foundOrder[] = {
   mindStone,
 };
 
-Adafruit_NeoPixel gauntlet = Adafruit_NeoPixel(PIXEL_COUNT, PIXELCHAIN_PIN, NEO_GRB + NEO_KHZ800);
-
-uint32_t getStoneBrightness(InfinityStone stone, int brightness) {
-  float percentage = (brightness * 0.01);
-  
-  return Adafruit_NeoPixel::Color(
-    uint8_t ( stone.color.red * percentage ),
-    uint8_t ( stone.color.green * percentage ),
-    uint8_t ( stone.color.blue * percentage )
-  );
-}
+Adafruit_NeoPixel controller = Adafruit_NeoPixel(PIXEL_COUNT, PIXELCHAIN_PIN, NEO_GRB + NEO_KHZ800);
 
 InfinityStone getStone(int location) {
   return foundOrder[location];
@@ -95,20 +74,20 @@ int incrementPulse() {
 void updateStones() {
   for ( int i = 0; i < 6; i++ ) {
     InfinityStone stone = getStone(i);
-    uint32_t color = getStoneBrightness(stone, currentPulse());
-    gauntlet.setPixelColor(stone.location, color);
+    uint32_t color = stone.getColor(currentPulse());
+    controller.setPixelColor(stone.location, color);
   }
-  gauntlet.show();
+  controller.show();
   incrementPulse(); 
 }
 
 void blackoutGauntlet() {
   for ( int i = 0; i < 6; i++ ) {
     InfinityStone stone = getStone(i);
-    uint32_t color = getStoneBrightness(stone, 0);
-    gauntlet.setPixelColor(stone.location, color);
+    uint32_t color = stone.getColor(0);    
+    controller.setPixelColor(stone.location, color);
   }  
-  gauntlet.show();
+  controller.show();
 }
 
 
@@ -116,10 +95,10 @@ void blackoutGauntlet() {
 void lightAllStones(int brightness) {
   for ( int i = 0; i < 6; i++ ) {
     InfinityStone stone = getStone(i);
-    uint32_t color = getStoneBrightness(stone, brightness);
-    gauntlet.setPixelColor(stone.location, color);
+    uint32_t color = stone.getColor(brightness);
+    controller.setPixelColor(stone.location, color);
   }  
-  gauntlet.show();  
+  controller.show();  
 }
 
 void lightStone(InfinityStone stone) {
@@ -135,10 +114,9 @@ void lightStone(InfinityStone stone) {
   }; 
 
   for ( int j = 0; j < sizeof(levels) / sizeof(int); j++ ) {
-    uint32_t color = getStoneBrightness(stone, levels[j]);
-    
-    gauntlet.setPixelColor(stone.location, color);
-    gauntlet.show();
+    uint32_t color = stone.getColor(levels[j]);    
+    controller.setPixelColor(stone.location, color);
+    controller.show();
     
     delay(random(85, 115));
   }   
@@ -165,8 +143,8 @@ void hardPulseStones(int pulseTimes) {
 void setup() { 
   randomSeed(analogRead(0));
   
-  gauntlet.begin();
-  gauntlet.setBrightness(255);
+  controller.begin();
+  controller.setBrightness(255);  
 
   lightStonesInOrder();
   hardPulseStones(2);

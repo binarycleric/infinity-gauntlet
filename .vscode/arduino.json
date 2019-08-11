@@ -1,0 +1,6 @@
+{
+    "board": "adafruit:avr:flora8",
+    "port": "COM10",
+    "programmer": "AVRISP mkII",
+    "sketch": "main\\main.ino"
+}
