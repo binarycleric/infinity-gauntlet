@@ -2,6 +2,7 @@
 #define InfinityStone_H
 
 #include <Adafruit_NeoPixel.h>
+#include "Board.h"
 
 struct StoneColor {
   uint8_t red;
@@ -11,9 +12,12 @@ struct StoneColor {
 
 class InfinityStone {
   public:
+    InfinityStone(StoneColor color, int location);
     uint32_t getColor(int brightness);
-  
-    StoneColor color; 
+    void setBrightness(Board &board, int brightness);
+
+  private:
+    StoneColor color;
     // The LED's location in the wiring chain.
     int location;
 };

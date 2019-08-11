@@ -16,7 +16,3 @@ void Board::setPixelColor(int location, uint32_t color) {
   _controller.setPixelColor(location, color);
   _controller.show();
 }
-
-void Board::show() {
-  // _controller.show();
-}
