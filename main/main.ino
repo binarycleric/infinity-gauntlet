@@ -51,10 +51,6 @@ InfinityStone foundOrder[] = {
 
 Adafruit_NeoPixel controller = Adafruit_NeoPixel(PIXEL_COUNT, PIXELCHAIN_PIN, NEO_GRB + NEO_KHZ800);
 
-InfinityStone getStone(int location) {
-  return foundOrder[location];
-}
-
 int currentPulse() {
   return pulseLevels[pulseLocation];
 }
@@ -73,7 +69,7 @@ int incrementPulse() {
 
 void updateStones() {
   for ( int i = 0; i < 6; i++ ) {
-    InfinityStone stone = getStone(i);
+    InfinityStone stone = foundOrder[i];
     uint32_t color = stone.getColor(currentPulse());
     controller.setPixelColor(stone.location, color);
   }
@@ -83,7 +79,7 @@ void updateStones() {
 
 void blackoutGauntlet() {
   for ( int i = 0; i < 6; i++ ) {
-    InfinityStone stone = getStone(i);
+    InfinityStone stone = foundOrder[i];
     uint32_t color = stone.getColor(0);    
     controller.setPixelColor(stone.location, color);
   }  
@@ -94,7 +90,7 @@ void blackoutGauntlet() {
 // Light the stones in the order Thanos found them.
 void lightAllStones(int brightness) {
   for ( int i = 0; i < 6; i++ ) {
-    InfinityStone stone = getStone(i);
+    InfinityStone stone = foundOrder[i];
     uint32_t color = stone.getColor(brightness);
     controller.setPixelColor(stone.location, color);
   }  
@@ -102,24 +98,13 @@ void lightAllStones(int brightness) {
 }
 
 void lightStone(InfinityStone stone) {
-  int levels[] = {
-    random(26, 34),
-    random(35, 42),
-    random(45, 55),
-    random(59, 78),
-    random(80, 90),
-    100,
-    random(92, 98),
-    random(95, 84),
-  }; 
-
-  for ( int j = 0; j < sizeof(levels) / sizeof(int); j++ ) {
-    uint32_t color = stone.getColor(levels[j]);    
+  for ( int j = 1; j <= 100; j++ ) {
+    uint32_t color = stone.getColor(j);
     controller.setPixelColor(stone.location, color);
     controller.show();
     
-    delay(random(85, 115));
-  }   
+    delay(random(8, 20));    
+  }
 }
 
 void lightStonesInOrder() { 
