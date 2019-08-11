@@ -5,33 +5,6 @@
 #define PIXEL_COUNT 6
 
 int brightness = 50;
-int pulseLocation = 0;
-
-// Levles while all the stones are pulsing. Think when Thanos
-// finally collected them all.
-int pulseLevels[] = {
-  30, 
-  35,
-  42, 
-  45,
-  55, 
-  60, 
-  80,
-  85,
-  90, 
-  100, 
-  95, 
-  90, 
-  85,
-  82,
-  80,
-  60,
-  55,
-  50,
-  43,
-};
-
-int pulseLength = sizeof(pulseLevels) / sizeof(int);
 
 InfinityStone timeStone    = { StoneColor {   0, 255,   0 }, 0 };
 InfinityStone powerStone   = { StoneColor { 255,   0, 255 }, 1 };
@@ -51,32 +24,6 @@ InfinityStone foundOrder[] = {
 
 Adafruit_NeoPixel controller = Adafruit_NeoPixel(PIXEL_COUNT, PIXELCHAIN_PIN, NEO_GRB + NEO_KHZ800);
 
-int currentPulse() {
-  return pulseLevels[pulseLocation];
-}
-
-int resetPulse() {
-  pulseLocation = 0;
-}
-
-int incrementPulse() {
-  if ( pulseLocation >= pulseLength ) {
-    resetPulse();
-  } else {
-    pulseLocation++;
-  } 
-}
-
-void updateStones() {
-  for ( int i = 0; i < 6; i++ ) {
-    InfinityStone stone = foundOrder[i];
-    uint32_t color = stone.getColor(currentPulse());
-    controller.setPixelColor(stone.location, color);
-  }
-  controller.show();
-  incrementPulse(); 
-}
-
 void blackoutGauntlet() {
   for ( int i = 0; i < 6; i++ ) {
     InfinityStone stone = foundOrder[i];
@@ -85,7 +32,6 @@ void blackoutGauntlet() {
   }  
   controller.show();
 }
-
 
 // Light the stones in the order Thanos found them.
 void lightAllStones(int brightness) {
@@ -100,10 +46,11 @@ void lightAllStones(int brightness) {
 void lightStone(InfinityStone stone) {
   for ( int j = 1; j <= 100; j++ ) {
     uint32_t color = stone.getColor(j);
+
     controller.setPixelColor(stone.location, color);
     controller.show();
     
-    delay(random(8, 20));    
+    delay(random(11, 25));    
   }
 }
 
@@ -116,13 +63,33 @@ void lightStonesInOrder() {
   }
 }
 
-void hardPulseStones(int pulseTimes) {
-  for ( int j = 0; j < pulseTimes; j++ ) {
-    for ( int k = 0; k < sizeof(pulseLevels) / sizeof(int); k++ ) {
-      lightAllStones(pulseLevels[k]);
-      delay(150);
-    }
-  } 
+void hardPulseStones(int delayTime=random(10, 25)) {
+  // int delayTime = 15;
+  
+  for ( int p1 = 44; p1 <= 100; p1++ ) {
+    lightAllStones(p1);
+    delay(delayTime);    
+  }
+
+  for ( int p2 = 100; p2 > 85; p2-- ) {
+    lightAllStones(p2);
+    delay(delayTime);        
+  }
+
+  for ( int p2 = 85; p2 < 100; p2++ ) {
+    lightAllStones(p2);
+    delay(delayTime);            
+  }
+
+  for ( int p2 = 100; p2 > 85; p2-- ) {
+    lightAllStones(p2);
+    delay(delayTime);        
+  }
+
+  for ( int p3 = 85; p3 > 44; p3-- ) {
+    lightAllStones(p3);
+    delay(delayTime);     
+  }
 }
 
 void setup() { 
@@ -132,17 +99,16 @@ void setup() {
   controller.setBrightness(255);  
 
   lightStonesInOrder();
-  hardPulseStones(2);
+  hardPulseStones(random(20, 40));
+  hardPulseStones(random(30, 50));
 }
 
 void loop() {
   // Stan Lee's age and Earth 616 (MCU)
-  if (( random(95, 150000) <= 616 )) {
+  if (( random(95, 10000) <= 616 )) {
     lightStonesInOrder();
-    hardPulseStones(random(0, 3));    
-    resetPulse();
   }
-  
-  updateStones();
+
+  hardPulseStones(random(2, 25)); 
   delay(random(125, 425));
 }
