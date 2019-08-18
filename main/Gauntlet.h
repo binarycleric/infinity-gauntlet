@@ -16,8 +16,11 @@ class Gauntlet {
 
     static const int MIN_BRIGHTNESS;
     static const int MAX_BRIGHTNESS;
+    static const int STONE_COUNT;
 
   private:
+    int stoneCount();
+
     InfinityStone foundOrder[6];
 };
 

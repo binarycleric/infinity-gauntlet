@@ -3,6 +3,7 @@
 
 const int Gauntlet::MIN_BRIGHTNESS = 6;
 const int Gauntlet::MAX_BRIGHTNESS = 100;
+const int Gauntlet::STONE_COUNT = 6;
 
 Gauntlet::Gauntlet() {
   // power stone
@@ -24,16 +25,39 @@ void Gauntlet::lightStonesInOrder(Board &board) {
 
   delay(1000);
 
-  for ( int i = 0; i < 6; i++ ) {
+  for ( int i = 0; i < STONE_COUNT; i++ ) {
     for ( int brightness = MIN_BRIGHTNESS; brightness <= MAX_BRIGHTNESS; brightness++ ) {
       this->foundOrder[i].raiseBrightness(board, brightness, random(11, 25));
     }
   }
 }
 
+void Gauntlet::fadeBrightness(Board &board, int brightness) {
+  bool keepGoing = false;
+
+  do {
+    keepGoing = false;
+
+    for ( int i = 0; i < STONE_COUNT; i++ ) {
+      int current = this->foundOrder[i].getBrightness();
+
+      if ( current > brightness ) {
+        this->foundOrder[i].lowerBrightness(board, current - 1, 0);
+      } else if ( current < brightness ) {
+        this->foundOrder[i].raiseBrightness(board, current + 1, 0);
+      }
+
+      if ( this->foundOrder[i].getBrightness() != brightness ) {
+        keepGoing = (keepGoing || true);
+      }
+    }
+    delay(random(10, 25));
+  } while ( keepGoing );
+}
+
 // This is a real mess. TODO: Cleanup someday.
 void Gauntlet::ripGamora(Board &board) {
-  this->lightStones(board, MIN_BRIGHTNESS);
+  this->fadeBrightness(board, MIN_BRIGHTNESS);
   InfinityStone soulStone = this->foundOrder[3];
 
   delay(500);
@@ -64,7 +88,10 @@ void Gauntlet::ripGamora(Board &board) {
 }
 
 void Gauntlet::pulseStones(Board &board, int delayTime) {
-  for ( int p1 = 44; p1 <= 100; p1++ ) {
+  int startingBrightness = 44;
+  this->fadeBrightness(board, startingBrightness);
+
+  for ( int p1 = startingBrightness; p1 <= 100; p1++ ) {
     this->lightStones(board, p1);
     delay(delayTime);
   }
@@ -91,7 +118,7 @@ void Gauntlet::pulseStones(Board &board, int delayTime) {
 }
 
 void Gauntlet::lightStones(Board &board, int brightness) {
-  for ( int i = 0; i < 6; i++ ) {
+  for ( int i = 0; i < STONE_COUNT; i++ ) {
     this->foundOrder[i].setBrightness(board, brightness);
   }
 }

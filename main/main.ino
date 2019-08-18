@@ -3,6 +3,7 @@
 
 #define PIXELCHAIN_PIN 6
 #define PIXEL_COUNT 6
+#define DEBUG false
 
 Board board = Board(PIXEL_COUNT, PIXELCHAIN_PIN);
 Gauntlet gauntlet = Gauntlet();
@@ -12,9 +13,11 @@ void setup() {
 
   board.setup();
 
-  gauntlet.lightStonesInOrder(board);
-  gauntlet.pulseStones(board, random(20, 40));
-  gauntlet.pulseStones(board, random(30, 50));
+  if ( DEBUG == false) {
+    gauntlet.lightStonesInOrder(board);
+    gauntlet.pulseStones(board, random(20, 40));
+    gauntlet.pulseStones(board, random(30, 50));
+  }
 }
 
 void loop() {
