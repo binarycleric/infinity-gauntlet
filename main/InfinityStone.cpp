@@ -5,17 +5,26 @@ InfinityStone::InfinityStone(StoneColor color, int location) {
   this->location = location;
 }
 
-uint32_t InfinityStone::getColor(int brightness = 100) {
-  float percentage = (brightness * 0.01);
+InfinityStone::InfinityStone(const InfinityStone &stone) {
+  this->color = stone.getColor();
+  this->location = stone.getLocation();
+}
 
-  return Adafruit_NeoPixel::Color(
+int InfinityStone::getLocation() {
+  return this->location;
+}
+
+StoneColor InfinityStone::getColor() {
+  return this->color;
+}
+
+void InfinityStone::setBrightness(Board &board, int brightness) {
+  float percentage = (brightness * 0.01);
+  uint32_t litColor = Adafruit_NeoPixel::Color(
     uint8_t ( color.red * percentage ),
     uint8_t ( color.green * percentage ),
     uint8_t ( color.blue * percentage )
   );
-}
 
-void InfinityStone::setBrightness(Board &board, int brightness) {
-  uint32_t color = getColor(brightness);
-  board.setPixelColor(this->location, color);
+  board.setPixelColor(this->location, litColor);
 }

@@ -13,7 +13,12 @@ struct StoneColor {
 class InfinityStone {
   public:
     InfinityStone(StoneColor color, int location);
-    uint32_t getColor(int brightness);
+    InfinityStone(const InfinityStone&);
+    InfinityStone() { }
+
+    StoneColor getColor();
+    int getLocation();
+
     void setBrightness(Board &board, int brightness);
 
   private:
