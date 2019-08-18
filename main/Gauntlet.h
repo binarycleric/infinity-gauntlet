@@ -10,9 +10,12 @@ class Gauntlet {
 
     void lightStones(Board&, int);
     void lightStonesInOrder(Board&);
+    void ripGamora(Board&);
     void pulseStones(Board&, int);
+    void fadeBrightness(Board&, int);
 
     static const int MIN_BRIGHTNESS;
+    static const int MAX_BRIGHTNESS;
 
   private:
     InfinityStone foundOrder[6];

@@ -5,13 +5,14 @@
 
 class Board {
   public:
-    Board(Adafruit_NeoPixel &controller);
+    Board(int, int);
+
     void setup();
     void setPixelColor(int location, uint32_t color);
 
   private:
-    bool _setup;
-    Adafruit_NeoPixel _controller;
+    bool isSetup;
+    Adafruit_NeoPixel controller;
 };
 
 #endif

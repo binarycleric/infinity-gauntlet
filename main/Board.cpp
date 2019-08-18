@@ -1,18 +1,18 @@
 #include <Adafruit_NeoPixel.h>
 #include "Board.h"
 
-Board::Board(Adafruit_NeoPixel &controller) {
-  _controller = controller;
-  _setup = false;
+Board::Board(int pixelCount, int pixelPin) {
+  this->controller = Adafruit_NeoPixel(pixelCount, pixelPin, NEO_GRB + NEO_KHZ800);
+  this->isSetup = false;
 }
 
 void Board::setup() {
-  _controller.begin();
-  _controller.setBrightness(255);
-  _setup = true;
+  this->controller.begin();
+  this->controller.setBrightness(255);
+  this->isSetup = true;
 }
 
 void Board::setPixelColor(int location, uint32_t color) {
-  _controller.setPixelColor(location, color);
-  _controller.show();
+  this->controller.setPixelColor(location, color);
+  this->controller.show();
 }
